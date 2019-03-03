@@ -1,0 +1,7 @@
+# If you're good we let you in
+User-Agent: ia_archive
+Disallow:
+
+# If you're not we keep you out of the good stuff
+User-Agent: *
+Disallow: /secrets/flag.html
