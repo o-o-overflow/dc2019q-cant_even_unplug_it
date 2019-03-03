@@ -1,5 +1,5 @@
 service_name: "cant_even_unplug_it"
-description: "You know, we had this up and everything. Prepped nice HTML5, started deploying on a military-grade.pw subdomain, secure site, the whole shabang. Boss-man got scared and unplugged the server. Can you believe it? Unplugged. Like that can keep it safe..."
+description: "You know, we had this up and everything. Prepped nice HTML5, started deploying on a military-grade.pw subdomain, got the certificate, the whole shabang. Boss-man got scared and unplugged the server. Can you believe it? Unplugged. Like that can keep it secret..."
 tags:
   - recon
   - treasurehunt
