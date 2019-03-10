@@ -1,12 +1,12 @@
 service_name: "cant_even_unplug_it"
-description: "You know, we had this up and everything. Prepped nice HTML5, started deploying on a military-grade.pw subdomain, got the certificate, the whole shabang. Boss-man got scared and unplugged the server. Can you believe it? Unplugged. Like that can keep it secret..."
+description: "You know, we had this up and everything. Prepped nice HTML5, started deploying on a military-grade-secrets.dev subdomain, got the certificate, the whole shabang. Boss-man got moody and wanted another name, we set up the new names and all. Finally he got scated and unplugged the server. Can you believe it? Unplugged. Like that can keep it secret..."
 tags:
   - recon
   - treasurehunt
   - intro
 violates_flag_format: false # if this is not "true", the flag is verfied against the flag format
 
-flag: "OOO{the_internet_never_forgets_man}"
+flag: "OOO{DAMNATIO_MEMORIAE}"
 
 # Type can be normal or king_of_the_hill
 type: normal

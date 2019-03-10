@@ -19,18 +19,16 @@ def page_must_contain(url, needle):
 
 
 def step1_ct():
-    # FYI, the subdomains are:
-    #   we-had-started-deploying-here.military-grade.pw
-    #   boss-made-us-move-to.such-great-security.pw.military-grade.pw
-    # Just had Google temporarly redirect them to my website, they get a certificate and it gets logged.
-    page_must_contain('https://crt.sh/?q=%25.military-grade.pw', 'such-great-security.pw')
+    # Turns out letsencrypt makes common-names by default, and CNs cannot be more than 64 characters
+    # We can only suggest the subdomain as the first step, the full name does not fit :(
+    page_must_contain('https://crt.sh/?q=%25.military-grade-secrets.dev', 'even-more-militarygrade.pw')
+    page_must_contain('https://crt.sh/?q=%25.even-more-militarygrade.pw', 'forget-me-not.even-more-militarygrade.pw')
 
 
 def step2_archive():
-    page_must_contain('https://web.archive.org/web/20190303024447/http://such-great-security.pw/', 'robots')
-    page_must_contain('https://web.archive.org/web/20190303024447if_/http://such-great-security.pw/robots.txt', 'secrets')  # text pages are iframe'd
-    page_must_contain('https://web.archive.org/web/20190303024447/http://such-great-security.pw/secrets/', 'flag')
-    page_must_contain('https://web.archive.org/web/20190303024447/http://such-great-security.pw/secrets/flag.html', 'OOO{the_internet_never_forgets_man}')
+    page_must_contain('https://web.archive.org/web/20190311064603/https://forget-me-not.even-more-militarygrade.pw/', 'OOO{DAMNATIO_MEMORIAE}')
+    # Potentially also http://archive.is/forget-me-not.even-more-militarygrade.pw
+    # I'm going to leave it on for some time, so it should also end up in Censys / Shodan / etc.
 
 
 
@@ -39,4 +37,4 @@ if __name__ == "__main__":
     step1_ct()
     print("[ ] Step 2: Looking up the pages on the Internet Archive...")
     step2_archive()
-    print("[^] It worked! And with none of the servers active :D")
+    print("[^] It worked!")
