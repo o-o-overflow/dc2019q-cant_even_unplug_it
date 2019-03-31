@@ -2,28 +2,29 @@
 
 import sys
 import tempfile
-import urllib.request
-import urllib.error
-from errno import ENETUNREACH, ENOENT, EADDRNOTAVAIL  # This is kinda wrong
-
+import urllib3
+urllib3.disable_warnings()  # Too annoying, and it doesn't really matter here
+http = urllib3.PoolManager(retries=10)
 
 def page_must_contain(url, needle):
-    with urllib.request.urlopen(url) as r:
-        content = r.read().decode()
-        if needle not in content:
-            with tempfile.NamedTemporaryFile('w', suffix='.html', prefix='pagecontent', delete=False) as f:
-                f.write(content)
-                content_dump_filename = f.name
-            raise Exception("Could not find '{}' in page {} -- page content dumped to {}".format(needle, url, content_dump_filename))
+    r = http.request('GET',url)
+    content = r.data.decode('utf-8')
+    if needle not in content:
+        with tempfile.NamedTemporaryFile('w', suffix='.html', prefix='pagecontent', delete=False) as f:
+            f.write(content)
+            content_dump_filename = f.name
+        raise Exception("Could not find '{}' in page {} -- page content dumped to {}".format(needle, url, content_dump_filename))
     print("[*] Good, '{}' was found on {}".format(needle, url))
 
 
 def get_exception(url):
     try:
-        with urllib.request.urlopen(url) as r:
-            r.read()
-            return None   # Possibly: assert
-    except urllib.error.URLError as e:
+        r = http.request('GET',url)
+        assert r.data
+        return None   # Possibly: assert
+    except urllib3.exceptions.MaxRetryError as e:
+        return e.reason
+    except urllib3.exceptions.HTTPError as e:
         return e
 
 
@@ -44,15 +45,18 @@ def step2_archive():
 
 def check_down_with_dns():
     # Self-check first
-    e = get_exception("https://down.jacopo.cc"); assert e.reason.errno in (ENETUNREACH,EADDRNOTAVAIL), "SELF-CHECK ERROR: Failed to check down.jacopo.cc is in fact down (got errno != ENETUNREACH, {})".format(e)
-    e = get_exception("https://nonexistent.jacopo.cc"); assert e.reason.errno == -ENOENT, "SELF-CHECK ERROR: Failed to check nonexisting DNS (got errno != -ENOENT, {})".format(e)
+    e = get_exception("https://down.jacopo.cc"); assert isinstance(e, urllib3.exceptions.ConnectTimeoutError), \
+        "SELF-CHECK ERROR: Failed to check down.jacopo.cc is in fact down (I wanted ConnectTimeoutError, got {})".format(e)
+    e = get_exception("https://nonexistent.jacopo.cc"); assert isinstance(e, urllib3.exceptions.NewConnectionError), \
+        "SELF-CHECK ERROR: Failed to check nonexisting DNS (I wanted NewConnectionError, got {})".format(e)  # Reliable DNS vs. other errors?
     # Then check the real sites
     e = get_exception("https://forget-me-not.even-more-militarygrade.pw")
     if e is None:
         print("WARN: The site is still up! Remember to turn it off before the game!")
         sys.stderr.write("\n\n\n **************** WARNING **********\n\n  The site is still up! Remember to turn it off before the game!\n\n\n\n\n")
     else:
-        assert e.reason.errno in (ENETUNREACH,EADDRNOTAVAIL), "DNS down or something? I was expecting unreachable/not-available, got {} instead".format(e)
+        assert isinstance(e, urllib3.exceptions.ConnectTimeoutError), \
+                "DNS down or something? I was expecting unreachable/not-available, got {} instead".format(e)
         print("Site is already down, good if quals are tomorrow :D")
 
 
