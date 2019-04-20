@@ -2,10 +2,9 @@ FROM ubuntu:latest
 
 ENV TERM linux
 
-RUN apt-get -qq update && apt-get -qq install python3-urllib3
-#RUN apt-get -qq update && apt-get -qq install python3-pip
-#COPY requirements.txt /requirements.txt
-#RUN pip install -r requirements.txt
+run echo "travis_fold:start:Dapt\033[33;1mservice Dockerfile apt\033[0m" && \
+    apt-get -qq update && apt-get -qq install python3-urllib3 &&
+    echo "\ntravis_fold:end:Dapt\r"
 
 COPY check.py /
 
