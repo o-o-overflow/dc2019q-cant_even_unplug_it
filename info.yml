@@ -1,8 +1,8 @@
 service_name: "cant_even_unplug_it"
 description: "You know, we had this up and everything. Prepped nice HTML5, started deploying on a military-grade-secrets.dev subdomain, got the certificate, the whole shabang. Boss-man got moody and wanted another name, we set up the new names and all. Finally he got scared and unplugged the server. Can you believe it? Unplugged. Like that can keep it secret..."
 tags:
+  - web
   - recon
-  - treasurehunt
   - intro
 violates_flag_format: false # if this is not "true", the flag is verfied against the flag format
 
